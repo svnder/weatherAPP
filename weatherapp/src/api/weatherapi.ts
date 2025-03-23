@@ -1,22 +1,27 @@
 import axios from 'axios';
+import apiKey from '../api/apikey';
 
 
-//const apiKey = process.env.apiKey;
-const baseUrl = 'https://api.openweathermap.org/data/2.5/weather';
 
-const fetchWeather = async (city: string) => {
+const fetchWeather = async (): Promise<{
+    temp: number,
+    feelsLike: number,
+    icon: string,
+    name: string
+} | null> => {
     try {
-        const response = await axios.get(baseUrl, {
-            params: {
-                q: city,
-                appid: process.env.apiKey,
-                units: 'metric'
-            }
-        });
-        console.log(response.data);
-        return response.data;
+        const response = await axios.get(
+            `https://api.openweathermap.org/data/2.5/weather?q=Miami&appid=${apiKey}&units=metric`
+        );
+        return {
+            name: response.data.name,
+            temp: response.data.main.temp,
+            feelsLike: response.data.main.feels_like,
+            icon: response.data.weather[0].icon
+        };
     } catch (error) {
-        return error;
+        console.error(error);
+        return null;
     }
 }
 
